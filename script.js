@@ -22,6 +22,9 @@ var scoreInitialsEl = document.getElementById('scoreInitials');
 var lastScoreEl = document.getElementById('lastscore');
 var highScoresEl = document.getElementById('highscores');
 var highScoresInitialsEl = document.getElementById('highscores-initials');
+var backBtn = document.getElementById('back');
+var clearBtn = document.getElementById('clear');
+var submitBtn = document.getElementById('submit');
 
 //Questions
 var questionsArr = [
@@ -68,6 +71,17 @@ var questionsArr = [
 ];
 
 var currentQuestion = 0;
+var timeLeft = 120;
+
+//event listeners
+//start game
+startBtn.addEventListener('click', start, startTimer);
+startHighscoresBtn.addEventListener('click', showHighscores);
+//buttons inside highscore window
+backBtn.addEventListener('click', goBack);
+clearBtn.addEventListener('click', clearScores);
+//end of game buttons
+submitBtn.addEventListener('click', submitScore);
 
 //Randomize order of questions
 // Schwartzian transform algorithm found on Stack Overflow
@@ -82,11 +96,23 @@ function randomizeArr() {
 
 function renderQuestion(shuffledArr) {
     let q = randomizeArr[currentQuestion];
-    question.innerHTML = "<p>"=q.question +"</p>";
-    choices.a.innerHTML = 
+    question.innerHTML = "<p>"+ q.question +"</p>";
+    choices.a.innerHTML = "A: "+ q.optionA;
+    choices.b.innerHTML = "B: "+ q.optionB;
+    choices.c.innerHTML = "C: "+ q.optionC;
+    choices.d.innerHTML = "D: "+ q.optionD;
 }
-//switch from start screen to question screen start timer with minus time for wrong
-
+//timer func
+function startTimer() {
+    var timeInterval = setInterval(function() {
+        timeLeft --;
+        timerEl.textContent = timeLeft;
+        if (timeLeft == 0) {
+            clearInterval(timeInterval);
+            endGame();
+        }
+    }, 1000);
+} 
 //log answer and record for score in localstorage
 
 //after completion or interval end show score and ask for initials, store score in local storage
