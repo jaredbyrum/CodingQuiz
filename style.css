@@ -1,3 +1,13 @@
-/* main page style */
-/* question style */
-/* scoreboard style */
+/* mainel page style */
+#startPage {
+    display: block;
+}
+/* quizel style */
+#quiz {
+}
+/* gameend style */
+#gameEnd {
+}
+/* highscore list style */
+#highscoreCard {
+}
