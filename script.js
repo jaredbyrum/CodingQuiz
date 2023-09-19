@@ -52,7 +52,7 @@ var questionsArr = [
 ];
 
 var currentQuestion = 0;
-var timeLeft = 120;
+var timeLeft = 0;
 var finalScore = 0;
 
 //screen change functions 
@@ -75,12 +75,12 @@ function quizPage() {
 function endGame() {
     if(gameEndEl.style.display == 'none'){
         gameEndEl.style.display == 'block';
+        scoreEl.textContent = 'Your final score is '+ finalScore;
     } else {
         gameEndEl.style.display == 'none';
     }
 }
-
-function showScore() {
+function toggleScore() {
     while (userScores.lastElementChild) {
         userScores.removeChild(userScores.lastElementChild);
       }
@@ -92,7 +92,6 @@ function showScore() {
             user.textContent = element + " - " +localStorage.getItem(element)
             user.setAttribute('class', "bg-secondary text-white p-1 mb-2")
             userScores.appendChild(user)
-            // console.log(element, element.value )
         });
     }
     else{
@@ -110,54 +109,68 @@ function loadQuestion() {
         questionsArr[currentQuestion].answer.forEach(function(element, i) {
             var answers = document.createElement("button");
             answers.textContent = element;
-            answers.setAttribute("class","btn btn-primary p-3 m-2 ");
+            answers.setAttribute("class","btn btn-primary p-3 m-2");
             answers.setAttribute("data-index", i);
             choicesEl.appendChild(answers);
+            correctAnswer = questionsArr[currentQuestion].correct;
         });
     }
     else{
-        finalScore = timer
+        finalScore = timeLeft
         timeLeft = 1
+        quizPage();
+        endGame();
     }
 }
+
+submitBtn.addEventListener("click", function(){
+    endGame();
+    var name = initialsEl.value.trim();
+    localStorage.setItem(name, timeLeft);
+    toggleScore;
+});
+
+backBtn.addEventListener("click", function(){
+    toggleScore();
+    startPage();
+    timerEl.textContent = "Time: 120";
+});
+
 //timer func
-function startTimer() {
-    var timeInterval = setInterval(function() {
-        timeLeft --;
-        timerEl.textContent = timeLeft;
-        if (timeLeft == 0) {
-            clearInterval(timeInterval);
-            endGame();
+function startTime(){
+    var timerInterval = setInterval(function() {
+        timeLeft--;
+        timerEl.textContent = "Time: " + timeLeft;
+        if(timeLeft == 0){
+            clearInterval(timerInterval);
             quizPage();
+            endGame();
         }
     }, 1000);
-} 
+}
 
-//after completion or interval end show score and ask for initials, store score in local storage
-// Starts the quiz
+//start quiz function
 startBtn.addEventListener("click", function(){
-    timer = 120
-    questionNumber = 0
-    startTimer();
+    timeLeft = 120;
+    currentQuestion = 0;
+    startTime();
     startPage();
     quizPage();
     loadQuestion();
 
-    choicesEl.addEventListener("click", function (event) {
-        var element = event.target
+    choicesEl.addEventListener("click", function(event) {
+        var element = event.target;
         if(element.matches("button")){
-            var index = element.getAttribute("data-index")
-            if(index == questionsArr[questionNumber].correct){
-                questionNumber++;
+            var index = element.getAttribute("data-index");
+            if(index == questionsArr[currentQuestion].correct){
+                currentQuestion++;
                 loadQuestion();
             } else {
-                questionNumber++;
-                timer -= 15;
-                loadQuestion();   
+                currentQuestion++;
+                timeLeft -= 15;
+                loadQuestion();
             }
         }
     })
 })
-
-
-
+console.log(questionsArr[currentQuestion].correct)
