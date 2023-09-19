@@ -1,13 +1,3 @@
-/* mainel page style */
-#startPage {
-    display: block;
-}
-/* quizel style */
-#quiz {
-}
-/* gameend style */
-#gameEnd {
-}
-/* highscore list style */
-#highscoreCard {
+header{
+    display: inline-block;
 }

@@ -26,58 +26,34 @@ var submitBtn = document.getElementById('submit');
 var questionsArr = [
     {
         question: 'JavaScript is a ___-side programming language.',
-        optionA: 'Client',
-        optionB: 'Server',
-        optionC: 'Both',
-        optionD: 'None',
-        correct: 'c',
+        answer: ['Client', 'Server', 'Both', 'None'], 
+        correct: 2,
     },
     {
         question: 'What is the correct Syntax to display "Hello World!" in an alert box?',
-        optionA: 'alert("Hello World!")',
-        optionB: 'alertBox("Hello World!")',
-        optionC: 'alert(Hello World!)',
-        optionD: 'displayAlert("Hello World!")',
-        correct: 'a',
+        answer: ['alert("Hello World!")', 'alertBox("Hello World!")', 'alert(Hello World!)'],
+        correct: 0,
     },
     {
         question: 'How do you get the DOM element using the "id" with JavaScript?',
-        optionA: 'window.getElementById()',
-        optionB: 'document.getElementById()',
-        optionC: 'page.getElementById()',
-        optionD: 'document.innerHTML.getElementById()',
-        correct: 'b',
+        answer: ['window.getElementById()', 'document.getElementById()', 'page.getElementById()', 'document.innerHTML.getElementById()'],
+        correct: 1,
     },
     {
         question: 'How do you create a new function in JavaScript?',
-        optionA: 'new.function() {}',
-        optionB: 'function "myNewFunction"() {}',
-        optionC: 'var "myNewFunction" = function() {}',
-        optionD: 'Both b and c',
-        correct: 'd',
+        answer: ['new.function() {}', 'function "myNewFunction"() {}', 'var "myNewFunction" = function() {}', 'Both b and c'],
+        correct: 3,
     },
     {
         question: 'How do define data as an Array in JavaScript?',
-        optionA: 'var Array = "1, 2, 3, 4";',
-        optionB: 'var Array = 1, 2, 3, 4;',
-        optionC: 'var Array = [1, 2, 3, 4]',
-        optionD: 'None of the above.',
-        correct: 'c',
+        answer: ['var Array = "1, 2, 3, 4";', 'var Array = 1, 2, 3, 4;', 'var Array = [1, 2, 3, 4]', 'None of the above.'],
+        correct: 2,
     }
 ];
 
 var currentQuestion = 0;
 var timeLeft = 120;
 var finalScore = 0;
-
-//event listeners
-startBtn.addEventListener("click", start);
-startHighscoresBtn.addEventListener("click", showHighscores);
-//buttons inside highscore window
-backBtn.addEventListener("click", goBack);
-clearBtn.addEventListener("click", clearScores);
-//end of game buttons
-submitBtn.addEventListener("click", submitScore);
 
 //screen change functions 
 function startPage() {
@@ -96,52 +72,44 @@ function quizPage() {
     }
 }
 
-function wrongPage() {
-    if(wrongEl.style.display == "none"){
-        wrongEl.style.display = "block";
-        var time = 1;
-        var timerInterval = setInterval(function() {
-            time--;
-            if(time == 0){
-                clearInterval(timerInterval);
-                wrongPage();
-            }
-        }, 1000)
-    }
-    else{
-        wrongEl.style.display = "none";
-    }
-}
-//same as wrong page displays on a one second timer
-function correctPage() {
-    if(correctEl.style.display == "none"){
-        correctEl.style.display = "block";
-        var time = 1;
-        var timerInterval = setInterval(function() {
-            time--;
-            if(time == 0){
-                clearInterval(timerInterval);
-                correctPage();
-            }
-        }, 1000)
-    }
-    else{
-        correctEl.style.display = "none";
+function endGame() {
+    if(gameEndEl.style.display == 'none'){
+        gameEndEl.style.display == 'block';
+    } else {
+        gameEndEl.style.display == 'none';
     }
 }
 
-//found on Stack Overflow
+function showScore() {
+    while (userScores.lastElementChild) {
+        userScores.removeChild(userScores.lastElementChild);
+      }
+    if(scoreEl.style.display == "none"){
+        scoreEl.style.display = "block"
+
+        Object.keys(localStorage).forEach(element => {
+            var user = document.createElement("li")
+            user.textContent = element + " - " +localStorage.getItem(element)
+            user.setAttribute('class', "bg-secondary text-white p-1 mb-2")
+            userScores.appendChild(user)
+            // console.log(element, element.value )
+        });
+    }
+    else{
+        scoreEl.style.display = "none"
+    }
+}
+
 function loadQuestion() {
     while (choicesEl.lastElementChild) {
         choicesEl.removeChild(choicesEl.lastElementChild);
       }
     if(questionsArr[currentQuestion]){
-        choicesEl.textContent = questionsArr[currentQuestion].question
+        questionEl.textContent = questionsArr[currentQuestion].question
     
         questionsArr[currentQuestion].answer.forEach(function(element, i) {
             var answers = document.createElement("button");
             answers.textContent = element;
-            console.log(i);
             answers.setAttribute("class","btn btn-primary p-3 m-2 ");
             answers.setAttribute("data-index", i);
             choicesEl.appendChild(answers);
@@ -160,19 +128,36 @@ function startTimer() {
         if (timeLeft == 0) {
             clearInterval(timeInterval);
             endGame();
+            quizPage();
         }
     }, 1000);
 } 
-//start game func
-function start() {
-    // randomizeArr();
-    startPageEl.style.display = "none";
-    quizEl.style.display = "block";
-    displayQuestion();
-    startTimer();
-}
-
 
 //after completion or interval end show score and ask for initials, store score in local storage
+// Starts the quiz
+startBtn.addEventListener("click", function(){
+    timer = 120
+    questionNumber = 0
+    startTimer();
+    startPage();
+    quizPage();
+    loadQuestion();
+
+    choicesEl.addEventListener("click", function (event) {
+        var element = event.target
+        if(element.matches("button")){
+            var index = element.getAttribute("data-index")
+            if(index == questionsArr[questionNumber].correct){
+                questionNumber++;
+                loadQuestion();
+            } else {
+                questionNumber++;
+                timer -= 15;
+                loadQuestion();   
+            }
+        }
+    })
+})
+
 
 
