@@ -8,7 +8,7 @@ The timer begins and you are taken to your first question.
 Answer the question, if correct advance. If wrong, lose 10 seconds.
 When last question is asnswered display final score and ask for initials to submit, will not allow emtpy value.
 
-#Citations
+# Citations
 Some code sourced from:
 Stack Overflow
 TA's, and instructor
