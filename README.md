@@ -22,7 +22,7 @@ TA's, and instructor
 
 # Links
 
-Live URL: 
+Live URL: https://jaredbyrum.github.io/CodingQuiz/
 
 GitHub Repo: https://github.com/jaredbyrum/CodingQuiz/
 
