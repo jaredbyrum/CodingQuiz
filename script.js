@@ -1,6 +1,6 @@
 var rootEl = document.getElementById('root');
 var startPageEl = document.getElementById('startPage');
-var startHighscoresBtn = document.getElementById('startHighscore');
+var startHighscoresBtn = document.getElementById('highscores');
 var startBtn = document.getElementById('startbtn');
 var quizEl = document.getElementById('quiz');
 var timerEl = document.getElementById('timer');
@@ -16,7 +16,7 @@ var initialsEl = document.getElementById('initials');
 var highscoreCardEl = document.getElementById('highscoreCard');
 var scoreInitialsEl = document.getElementById('scoreInitials');
 var lastScoreEl = document.getElementById('lastscore');
-var highScoresEl = document.getElementById('highscores');
+var highScoresEl = document.getElementById('highscoreList');
 var highScoresInitialsEl = document.getElementById('highscores-initials');
 var backBtn = document.getElementById('back');
 var clearBtn = document.getElementById('clear');
@@ -51,7 +51,7 @@ var questionsArr = [
         correct: 2,
     }
 ];
-
+var highscores = [];
 var currentQuestion = 0;
 var timeLeft = 120;
 //cleaned up timer with help from instructor in office hours
@@ -119,26 +119,52 @@ choicesEl.addEventListener("click", function(event){
             loadQuestion();
     }
 })
-//logging scores
+//logging scores code foubnd on STack Overflow
 submitBtn.addEventListener("click", function(event){
     event.preventDefault();
     var name = initialsEl.value;
+    function saveHighScore(name, timeLeft){
+        localStorage.setItem(name, name + ": " + timeLeft)
+    }
     if (name === ""){
         alert("Initials input cannot be empty! Please try again");
     } else {
-        localStorage.setItem(name, timeLeft);
-        var score = userScoresEl.createElement("li");
-        score.textContent = localStorage.getItem(name, timeLeft);
-        userScoresEl.appendChild(score);
+        saveHighScore(name, timeLeft);
+        var score = localStorage.getItem(name);
+        highscores.push(score) 
+        //sorting function doesnt work beucase initaials at beginning
+        var html = "";
+        for (var i = 0; i < highscores.length; i++){
+            html += "<li>" + highscores[i] + "</li>";
+        }
+        userScoresEl.innerHTML = html;
     }
+    console.log(highscores);
+    console.log(html);
 })
 
 startHighscoresBtn.addEventListener('click', function(event){
     event.preventDefault();
-
+    startPageEl.style.display = 'none';
+    gameEndEl.style.display = 'none';
+    quizEl.style.display = 'none'
+    clearInterval(timerInterval);
+    highscoreCardEl.style.display = 'block';
+    
 })
 //clear scores
 clearBtn.addEventListener("click", function(event){
     event.preventDefault();
-    
+    window.localStorage.clear();
+    highscores = [];
+    userScoresEl.innerHTML = highscores
+})
+
+backBtn.addEventListener("click", function(event){
+    event.preventDefault();
+    highscoreCardEl.style.display = 'none';
+    startPageEl.style.display = 'block';
+    currentQuestion = 0
+    timeLeft = 120
+    timerEl.textContent = "Time: 120"
 })
